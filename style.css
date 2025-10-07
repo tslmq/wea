@@ -1,0 +1,123 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #121212;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.container {
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    padding: 25px 20px;
+    width: 100%;
+    max-width: 650px; /* Карт нэмэгдсэн тул өргөнийг нэмсэн */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+h1, h2, h3 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2a2a2a;
+    color: #fff;
+}
+
+input::placeholder {
+    color: #aaa;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1976d2;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 🆕 Одоогийн цаг агаарын картын загвар */
+.current-weather-card {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+}
+
+.current-weather-card img {
+    width: 80px; /* Зургийг томруулсан */
+    height: 80px;
+}
+
+.current-weather-card .temperature {
+    font-size: 3em; /* Температурыг томоор харуулав */
+    font-weight: bold;
+    color: #ff9800; /* Тод өнгө */
+    margin: 5px 0 10px 0;
+}
+
+.current-weather-card .description {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* 5 хоногийн урьдчилсан мэдээний сүлжээ */
+.forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 15px;
+}
+
+.forecast-card {
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
+}
+
+.forecast-card h3 {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.forecast-card img {
+    width: 60px;
+    height: 60px;
+}
+
+.forecast-card p {
+    margin: 5px 0;
+    font-size: 14px;
+}

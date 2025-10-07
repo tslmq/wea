@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Цаг Агаарын Мэдээ: Одоо ба 5 Хоног</title>
+  <link rel="stylesheet" href="style.css" /> 
+</head>
+<body>
+  <div class="container">
+    <h1>Цаг Агаарын Урьдчилсан Мэдээ</h1>
+
+    <form id="weatherForm">
+      <input type="text" id="cityInput" placeholder="Хотын нэр (ж: Ulaanbaatar)" required />
+      <button type="submit">Харах</button>
+    </form>
+
+    <div id="forecastContainer" class="hidden">
+      <h2 id="forecastCity"></h2>
+      
+      <h3 style="margin-bottom: 10px;">Одоогийн байдал</h3>
+      <div id="currentWeatherCard" class="current-weather-card">
+        </div>
+      
+      <h3 style="margin-top: 30px; margin-bottom: 10px;">5 хоногийн урьдчилсан мэдээ (12:00 цагаар)</h3>
+      <div id="forecast" class="forecast-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("weatherForm");
+    const cityInput = document.getElementById("cityInput");
+    const forecastContainer = document.getElementById("forecastContainer");
+    const forecastCity = document.getElementById("forecastCity");
+    const forecast = document.getElementById("forecast");
+    // 🆕 Одоогийн мэдээний карт
+    const currentWeatherCard = document.getElementById("currentWeatherCard"); 
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const city = cityInput.value.trim();
+      if (!city) return;
+
+      const apiKey = "5f5001c381997c6da9f3050d27ba4ec5";
+      
+      // 🆕 1. Одоогийн цаг агаарын API URL
+      const currentUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=mn`;
+      // 2. 5 хоногийн урьдчилсан мэдээний API URL
+      const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric&lang=mn`;
+      
+      // 🆕 Promise.all-аар 2 хүсэлтийг зэрэг илгээж, хоёулангийнх нь хариуг хүлээж авна
+      Promise.all([
+        fetch(currentUrl).then(res => res.json()),
+        fetch(forecastUrl).then(res => res.json())
+      ])
+      .then(([currentData, forecastData]) => {
+          // Хэрэв аль нэг мэдээлэл алдаатай (хот олдсонгүй) бол
+          if (currentData.cod !== 200) {
+              throw new Error("Хот олдсонгүй.");
+          }
+
+          // === 1. Одоогийн Цаг Агаарын Мэдээг Харуулах (Current Weather) ===
+          const current = currentData; 
+          forecastCity.textContent = `${current.name}, ${current.sys.country}`;
+          currentWeatherCard.innerHTML = ""; 
+
+          const date = new Date(current.dt * 1000);
+          const options = { hour: "2-digit", minute: "2-digit" };
+          const time = date.toLocaleTimeString("mn-MN", options); 
+
+          const icon = current.weather[0].icon;
+          const description = current.weather[0].description;
+          const temp = current.main.temp.toFixed(1); // 1 бутархай тоотой
+          const wind = current.wind.speed.toFixed(1);
+
+          currentWeatherCard.innerHTML = `
+              <h4>${time}</h4>
+              <img src="https://openweathermap.org/img/wn/${icon}@4x.png" alt="${description}" />
+              <p class="description">${description}</p>
+              <p class="temperature"><strong>${temp}°C</strong></p>
+              <p>Салхи: ${wind} м/с | Чийгшил: ${current.main.humidity}%</p>
+          `;
+
+          // === 2. 5 Хоногийн Урьдчилсан Мэдээг Харуулах (5 Day Forecast) ===
+          forecast.innerHTML = "";
+          const dailyData = forecastData.list.filter(item => item.dt_txt.includes("12:00:00"));
+
+          dailyData.forEach((day) => {
+            const date = new Date(day.dt * 1000);
+            const options = { weekday: "short", month: "short", day: "numeric" };
+            const dayName = date.toLocaleDateString("mn-MN", options);
+
+            const icon = day.weather[0].icon;
+            const description = day.weather[0].description;
+            // 🆕 1 бутархай тоотой болгосон
+            const temp = day.main.temp.toFixed(1); 
+            const wind = day.wind.speed.toFixed(1);
+
+            forecast.innerHTML += `
+              <div class="forecast-card">
+                <h3>${dayName}</h3>
+                <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${description}" />
+                <p>${description}</p>
+                <p><strong>${temp}°C</strong></p>
+                <p>Салхи: ${wind} м/с</p>
+              </div>
+            `;
+          });
+
+          forecastContainer.classList.remove("hidden");
+        })
+        .catch((error) => {
+          alert(error.message);
+          forecastContainer.classList.add("hidden");
+        });
+    });
+  </script>
+</body>
+</html>
